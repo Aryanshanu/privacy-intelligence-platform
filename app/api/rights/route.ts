@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server'; import {z} from 'zod';
+const schema=z.object({requesterName:z.string().min(2).max(120),email:z.string().email(),type:z.enum(['ACCESS','CORRECTION','ERASURE','CONSENT_WITHDRAWAL','GRIEVANCE']),message:z.string().max(2000).optional()});
+export async function POST(req:Request){try{const input=schema.parse(await req.json());return NextResponse.json({data:{id:`DSAR-${crypto.randomUUID().slice(0,8).toUpperCase()}`,status:'NEW',dueAt:new Date(Date.now()+30*86400000).toISOString(),...input}},{status:201})}catch(e){return NextResponse.json({error:'Invalid rights request',details:e instanceof z.ZodError?e.flatten():undefined},{status:400})}}

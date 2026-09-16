@@ -1,0 +1,1 @@
+import {Copilot} from '@/components/Copilot';export default function Page(){return <><div className="eyebrow">Module 02</div><h1>Regulatory & policy copilot</h1><p className="muted">Ask compliance questions or paste a policy for an evidence-led DPDP gap review.</p><Copilot/></>}

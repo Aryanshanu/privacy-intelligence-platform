@@ -13,3 +13,6 @@ build/
 Thumbs.db
 .idea/
 .vscode/
+
+.next/
+

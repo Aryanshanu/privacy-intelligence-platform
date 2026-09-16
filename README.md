@@ -90,3 +90,27 @@ Build an AI-powered platform that continuously discovers data, interprets regula
 ## Differentiator
 
 The platform combines data intelligence, regulatory intelligence, and AI governance into a continuous privacy operating model—helping organizations detect, understand, prioritize, and remediate privacy risk as their data and technology landscape evolves.
+
+## PrivyGuard application
+
+Run locally: 
+pm install, copy .env.example to .env.local, then 
+px prisma db push, 
+pm run db:seed, and 
+pm run dev. The working reviewer experience is at /demo.
+
+### Architecture
+
+`mermaid
+flowchart LR
+  UI[Next.js App Router] --> API[Next.js API routes]
+  API --> DB[(Vercel Postgres / Prisma)]
+  API --> AI[OpenAI]
+  API --> Blob[Vercel Blob]
+  Cron[Vercel Cron] --> API
+` 
+
+### Deploy
+
+Add the variables in .env.example in Vercel, provision Postgres, then run ercel --prod. ercel.json schedules the monitoring route daily.
+

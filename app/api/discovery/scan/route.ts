@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server'; import {z} from 'zod'; import {detectPII} from '@/lib/pii';
+const schema=z.object({text:z.string().min(1).max(1_000_000),sourceName:z.string().min(1).max(200).default('Manual input')});
+export async function POST(req:Request){try{const input=schema.parse(await req.json());const findings=detectPII(input.text);return NextResponse.json({data:{sourceName:input.sourceName,findings,summary:{count:findings.length,reviewCount:findings.filter(x=>x.needsReview).length}}})}catch(e){return NextResponse.json({error:'Invalid scan request',details:e instanceof z.ZodError?e.flatten():undefined},{status:400})}}
