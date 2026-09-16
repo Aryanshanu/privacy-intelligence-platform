@@ -1,8 +1,8 @@
 # Privacy Intelligence Platform
 
-## AI-powered Data Privacy & Governance
+## Data Privacy & Governance
 
-Organizations are collecting and processing growing volumes of personal and sensitive data across applications, cloud platforms, AI solutions, employees, vendors, and third parties. Yet many privacy teams still rely on manual discovery, fragmented inventories, spreadsheets, static assessments, and periodic compliance reviews.
+Organizations are collecting and processing growing volumes of personal and sensitive data across applications, cloud platforms, technology solutions, employees, vendors, and third parties. Yet many privacy teams still rely on manual discovery, fragmented inventories, spreadsheets, static assessments, and periodic compliance reviews.
 
 The **Privacy Intelligence Platform** moves privacy from a periodic compliance exercise to continuous, intelligent governance.
 
@@ -12,14 +12,14 @@ Today, organizations struggle to reliably:
 
 - Identify where personal data resides and how it is used
 - Determine whether data processing aligns with DPDP, GDPR, and other regulations
-- Continuously assess privacy risk across business processes and AI use cases
+- Continuously assess privacy risk across business processes and technology use cases
 - Keep policies and controls aligned with regulatory change
 - Demonstrate compliance through reliable, current evidence
 - Scale privacy governance across a complex technology landscape
 
 ## The opportunity
 
-Build an AI-powered platform that continuously discovers data, interprets regulatory requirements, assesses privacy risk, and recommends actionable controls.
+Build a platform that continuously discovers data, interprets regulatory requirements, assesses privacy risk, and recommends actionable controls.
 
 ## Core proposition
 
@@ -27,15 +27,15 @@ Build an AI-powered platform that continuously discovers data, interprets regula
 
 ## Platform capabilities
 
-### 1. AI-powered data discovery & classification
+### 1. Data discovery & classification
 
 - Automated PII and sensitive-data discovery
 - Structured and unstructured data classification
-- Context-aware AI classification
+- Context-aware classification
 - Confidence scoring with human validation
 - Data inventory and metadata enrichment
 
-### 2. AI regulatory & policy copilot
+### 2. Regulatory & policy copilot
 
 - Validate policies against DPDP, GDPR, and other regulations
 - Interpret regulatory requirements
@@ -44,13 +44,13 @@ Build an AI-powered platform that continuously discovers data, interprets regula
 - Generate remediation recommendations
 - Analyze regulatory-change impact
 
-### 3. AI privacy governance
+### 3. Privacy governance
 
-- AI use-case inventory
-- Privacy assessment for AI and GenAI solutions
+- Technology use-case inventory
+- Privacy assessment for AI and Gentechnology solutions
 - Data-use and purpose assessment
 - Prompt, input, and output privacy assessment
-- AI DPIA / PIA workflows
+- DPIA / PIA workflows
 - Privacy risk scoring and control recommendations
 
 ### 4. Data processing & privacy intelligence
@@ -83,21 +83,21 @@ Build an AI-powered platform that continuously discovers data, interprets regula
 - PII exposure
 - High-risk processing activities
 - Open privacy issues
-- AI privacy risk
+- Technology privacy risk
 - Third-party privacy risk
 - Continuous monitoring
 
 ## Differentiator
 
-The platform combines data intelligence, regulatory intelligence, and AI governance into a continuous privacy operating model—helping organizations detect, understand, prioritize, and remediate privacy risk as their data and technology landscape evolves.
+The platform combines data intelligence, regulatory intelligence, and privacy governance into a continuous privacy operating model—helping organizations detect, understand, prioritize, and remediate privacy risk as their data and technology landscape evolves.
 
-## PrivyGuard application
+## Privacy Intelligence Platform application
 
 Run locally: 
 pm install, copy .env.example to .env.local, then 
 px prisma db push, 
 pm run db:seed, and 
-pm run dev. The working reviewer experience is at /demo.
+pm run dev. The working platform experience is at /demo.
 
 ### Architecture
 
@@ -121,4 +121,5 @@ The current stack uses only self-hostable AI services: Ollama (mistral for answe
 omic-embed-text for embeddings), Qdrant for vectors, and FastAPI with local persistence. Run docker compose up --build, then docker compose exec ollama ollama pull mistral and docker compose exec ollama ollama pull nomic-embed-text. Point the Vercel frontend at the backend with NEXT_PUBLIC_API_BASE_URL.
 
 The backend exposes POST /api/detect, POST /api/copilot/query, and POST /api/dsar. Its PII rules provide a safe fallback; deployers may add the optional covenant-data and Transformers dependencies for enhanced model-based classification.
+
 
