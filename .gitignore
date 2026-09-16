@@ -16,3 +16,7 @@ Thumbs.db
 
 .next/
 
+
+__pycache__/
+*.pyc
+

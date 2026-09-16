@@ -114,3 +114,11 @@ flowchart LR
 
 Add the variables in .env.example in Vercel, provision Postgres, then run ercel --prod. ercel.json schedules the monitoring route daily.
 
+
+## Open-source deployment
+
+The current stack uses only self-hostable AI services: Ollama (mistral for answers and 
+omic-embed-text for embeddings), Qdrant for vectors, and FastAPI with local persistence. Run docker compose up --build, then docker compose exec ollama ollama pull mistral and docker compose exec ollama ollama pull nomic-embed-text. Point the Vercel frontend at the backend with NEXT_PUBLIC_API_BASE_URL.
+
+The backend exposes POST /api/detect, POST /api/copilot/query, and POST /api/dsar. Its PII rules provide a safe fallback; deployers may add the optional covenant-data and Transformers dependencies for enhanced model-based classification.
+
