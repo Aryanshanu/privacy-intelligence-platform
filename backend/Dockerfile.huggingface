@@ -1,0 +1,31 @@
+# Hugging Face Spaces — Docker SDK — port 7860
+#
+# PUSH STEPS:
+#   1. Create Space at https://huggingface.co/new-space
+#      SDK: Docker, Hardware: CPU basic (free)
+#   2. Add secret GROQ_API_KEY in Space Settings → Variables and secrets
+#   3. From repo root:
+#        git remote add hf https://huggingface.co/spaces/<user>/privyguard
+#        git push hf main
+#   4. Spaces builds the image automatically. First build ~5–10 min.
+#   5. Public URL: https://<user>-privyguard.hf.space
+#
+# Do NOT add a local LLM layer here. LLM is Groq (remote, OpenAI-compatible).
+
+FROM python:3.12-slim
+
+RUN useradd -m -u 1000 user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
+
+WORKDIR $HOME/app
+
+COPY --chown=user requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+COPY --chown=user . .
+
+EXPOSE 7860
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]

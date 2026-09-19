@@ -19,4 +19,13 @@ Thumbs.db
 
 __pycache__/
 *.pyc
+*.db
+*.sqlite
+*.sqlite3
+
+.claude/
+*.log
+*.bak
+venv/
+.venv/
 

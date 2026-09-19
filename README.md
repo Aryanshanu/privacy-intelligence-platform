@@ -1,125 +1,80 @@
-# Privacy Intelligence Platform
+# PrivyGuard
 
-## Data Privacy & Governance
+AI-driven continuous privacy governance.
 
-Organizations are collecting and processing growing volumes of personal and sensitive data across applications, cloud platforms, technology solutions, employees, vendors, and third parties. Yet many privacy teams still rely on manual discovery, fragmented inventories, spreadsheets, static assessments, and periodic compliance reviews.
+Lifecycle: **Discover → Understand → Assess → Govern → Remediate → Monitor**
 
-The **Privacy Intelligence Platform** moves privacy from a periodic compliance exercise to continuous, intelligent governance.
+Target users: DPOs, privacy teams, compliance officers.
 
-## The problem
+## Stack
 
-Today, organizations struggle to reliably:
+- Frontend: Next.js 14 (App Router), TypeScript, Tailwind, shadcn/ui — deployed to Vercel
+- Backend: FastAPI, Python 3.12 — deployed to Hugging Face Spaces (Docker SDK, port 7860)
+- LLM: Groq, model `llama-3.3-70b-versatile`, OpenAI-compatible endpoint
+- PII detection: regex `detect()` in `backend/main.py` — Aadhaar, PAN, email, phone, IP
+- Vector store: Qdrant
+- Structured data: SQLite (dev) / Postgres (prod)
+- Embeddings: local, `BAAI/bge-small-en-v1.5` via `sentence-transformers`
 
-- Identify where personal data resides and how it is used
-- Determine whether data processing aligns with DPDP, GDPR, and other regulations
-- Continuously assess privacy risk across business processes and technology use cases
-- Keep policies and controls aligned with regulatory change
-- Demonstrate compliance through reliable, current evidence
-- Scale privacy governance across a complex technology landscape
+All components are open source. No OpenAI, no Azure, no proprietary endpoints.
 
-## The opportunity
+## Modules
 
-Build a platform that continuously discovers data, interprets regulatory requirements, assesses privacy risk, and recommends actionable controls.
-
-## Core proposition
-
-**Discover → Understand → Assess → Govern → Remediate → Monitor**
-
-## Platform capabilities
-
-### 1. Data discovery & classification
-
-- Automated PII and sensitive-data discovery
-- Structured and unstructured data classification
-- Context-aware classification
-- Confidence scoring with human validation
-- Data inventory and metadata enrichment
-
-### 2. Regulatory & policy copilot
-
-- Validate policies against DPDP, GDPR, and other regulations
-- Interpret regulatory requirements
-- Map requirements to controls
-- Identify compliance gaps
-- Generate remediation recommendations
-- Analyze regulatory-change impact
-
-### 3. Privacy governance
-
-- Technology use-case inventory
-- Privacy assessment for AI and Gentechnology solutions
-- Data-use and purpose assessment
-- Prompt, input, and output privacy assessment
-- DPIA / PIA workflows
-- Privacy risk scoring and control recommendations
-
-### 4. Data processing & privacy intelligence
-
-- Processing-activity inventory and RoPA
-- Data-flow mapping
-- Purpose and legal-basis tracking
-- Data-sharing and third-party visibility
-- Data-lifecycle and retention intelligence
-
-### 5. Privacy risk & control management
-
-- Automated privacy-risk assessment
-- Control library and gap assessment
-- Risk scoring
-- Remediation tracking
-- Evidence management
-- Privacy compliance dashboard
-
-### 6. Data principal rights automation
-
-- Access, correction, erasure, and consent-withdrawal requests
-- Grievance management
-- SLA tracking and workflow automation
-
-### 7. Privacy analytics & executive dashboard
-
-- Overall privacy posture score
-- Regulatory compliance score
-- PII exposure
-- High-risk processing activities
-- Open privacy issues
-- Technology privacy risk
-- Third-party privacy risk
-- Continuous monitoring
-
-## Differentiator
-
-The platform combines data intelligence, regulatory intelligence, and privacy governance into a continuous privacy operating model—helping organizations detect, understand, prioritize, and remediate privacy risk as their data and technology landscape evolves.
-
-## Privacy Intelligence Platform application
-
-Run locally: 
-pm install, copy .env.example to .env.local, then 
-px prisma db push, 
-pm run db:seed, and 
-pm run dev. The working platform experience is at /demo.
-
-### Architecture
-
-`mermaid
-flowchart LR
-  UI[Next.js App Router] --> API[Next.js API routes]
-  API --> DB[(Vercel Postgres / Prisma)]
-  API --> AI[OpenAI]
-  API --> Blob[Vercel Blob]
-  Cron[Vercel Cron] --> API
-` 
-
-### Deploy
-
-Add the variables in .env.example in Vercel, provision Postgres, then run ercel --prod. ercel.json schedules the monitoring route daily.
-
+1. AI-Powered Data Discovery & Classification
+2. AI Regulatory & Policy Copilot
+3. AI Privacy Governance
+4. Data Processing & Privacy Intelligence (RoPA)
+5. Privacy Risk & Control Management
+6. Data Principal Rights Automation (DSAR)
+7. Privacy Analytics & Executive Dashboard
 
 ## Open-source deployment
 
-The current stack uses only self-hostable AI services: Ollama (mistral for answers and 
-omic-embed-text for embeddings), Qdrant for vectors, and FastAPI with local persistence. Run docker compose up --build, then docker compose exec ollama ollama pull mistral and docker compose exec ollama ollama pull nomic-embed-text. Point the Vercel frontend at the backend with NEXT_PUBLIC_API_BASE_URL.
+### 1. Backend → Hugging Face Spaces
 
-The backend exposes POST /api/detect, POST /api/copilot/query, and POST /api/dsar. Its PII rules provide a safe fallback; deployers may add the optional covenant-data and Transformers dependencies for enhanced model-based classification.
+1. Create a Space at https://huggingface.co/new-space
+   - SDK: **Docker**
+   - Hardware: **CPU basic (free)**
+2. In Space **Settings → Variables and secrets**, add:
+   - `GROQ_API_KEY` = your free key from https://console.groq.com
+3. Push the repo:
+   ```bash
+   git remote add hf https://huggingface.co/spaces/<user>/privyguard
+   git push hf main
+   ```
+Spaces builds automatically. Public URL:
+https://<user>-privyguard.hf.space
 
+### 2. Frontend → Vercel
+Set the environment variable in the Vercel project:
 
+```env
+NEXT_PUBLIC_API_BASE_URL=https://<user>-privyguard.hf.space
+```
+Redeploy. The /demo route is read-only and remains available.
+
+### 3. Local development
+```bash
+cp .env.example .env
+# add GROQ_API_KEY to .env
+docker compose up --build
+```
+Backend: http://localhost:8000
+Qdrant: http://localhost:6333
+
+Pull nothing from Ollama. The LLM is Groq.
+
+Graceful fallback
+If GROQ_API_KEY is missing, /api/copilot/query returns a friendly message
+with HTTP 200. It does not crash. This behaviour must be preserved.
+
+Hard rules
+Open source only. No OpenAI, no Azure.
+
+CPU-only backend. No GPU assumptions.
+
+No Ollama anywhere in the deployed path.
+
+Verify any new PyPI package before adding it.
+
+PII masked in logs by default.
