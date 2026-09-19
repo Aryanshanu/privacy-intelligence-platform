@@ -146,25 +146,39 @@ def log_mutation(table_name: str, record_id: str, action: str,
 # ---------------------------------------------------------------------------
 
 PII_PATTERNS = {
+    "CREDIT_CARD_PCI": re.compile(r"\b(?:\d{4}[ -]?){3}\d{4}\b"),
+    "BANK_ROUTING_GLBA": re.compile(r"\b\d{9}\b"),
+    "SECRET_API_KEY": re.compile(r"\b(?:sk_live_[0-9a-zA-Z]+(?:\.{3})?|sk_test_[0-9a-zA-Z]+(?:\.{3})?|ghp_[0-9a-zA-Z]{36}|AKIA[0-9A-Z]{16})\b"),
     "EMAIL": re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b"),
     "PAN": re.compile(r"\b[A-Z]{5}[0-9]{4}[A-Z]\b"),
-    "AADHAAR": re.compile(r"\b[2-9][0-9]{3}[ -]?[0-9]{4}[ -]?[0-9]{4}\b"),
+    "AADHAAR": re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d|[ -]?\d)"),
     "PHONE": re.compile(r"\b(?:\+91[ -]?)?[6-9][0-9]{9}\b"),
     "IP_ADDRESS": re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"),
+    "INTERNAL_ID_SSN": re.compile(r"\b\d{3}[- ]\d{2,3}[- ]\d{3,4}\b"),
+    "ADMIN_CREDENTIAL": re.compile(r"\b[a-zA-Z0-9._-]+_(?:admin|root|service|backup|priv)\b"),
 }
 
 
 def detect_pii(text: str) -> list[dict]:
     hits = []
+    occupied = []
+
     for pii_type, pattern in PII_PATTERNS.items():
         for match in pattern.finditer(text):
+            start, end = match.start(), match.end()
+            # Avoid overlapping ranges (e.g. CC vs Aadhaar)
+            if any(max(s, start) < min(e, end) for s, e in occupied):
+                continue
+            occupied.append((start, end))
             hits.append({
                 "type": pii_type,
                 "value": match.group(),
-                "start": match.start(),
-                "end": match.end(),
+                "start": start,
+                "end": end,
             })
+    hits.sort(key=lambda x: x["start"])
     return hits
+
 
 # ---------------------------------------------------------------------------
 # Request models
